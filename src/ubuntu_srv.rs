@@ -5,7 +5,7 @@ use std::os::unix::fs::PermissionsExt;
 use std::path::Path;
 use std::process::Command;
 
-use crate::{BINARY, rutas::{bin_dir, bin_path, config_dir, config_file, service_path, systemd_user_dir}};
+use crate::{BINARY, rutas::{bin_dir, bin_path, config_dir, config_file, executor_path, service_path, systemd_user_dir}};
 pub fn install_service() -> anyhow::Result<()> {
     match fs::create_dir_all(bin_dir()) {
         Ok(_) => println!("[OK] Created bin dir"),
@@ -48,8 +48,7 @@ pub fn install_service() -> anyhow::Result<()> {
         );
     }
     //copio el executor
-    let ex_path = bin_path();
-    let executor = ex_path.join("executor");
+    let executor = executor_path();
         // Escribir binario (sin copias innecesarias)
     {
         let mut file = fs::File::create(&executor)?;

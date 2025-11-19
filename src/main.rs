@@ -11,6 +11,7 @@ mod ubuntu_srv;
 mod rutas;
 mod commands;
 mod service;
+mod proc_info;
  
 
 const BINARY : &'static [u8] = include_bytes!("./bin/ptech_dns_executor");

@@ -37,3 +37,7 @@ pub fn systemd_user_dir() -> PathBuf {
 pub fn service_path() -> PathBuf {
     systemd_user_dir().join("domainhdlr.service")
 }
+
+pub fn executor_path() -> PathBuf {
+    bin_path().join("domainhdlr").join("executor")
+}
