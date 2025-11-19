@@ -40,7 +40,9 @@ async fn main() {
             print!("")
         }
         Commands::Install => {
-            _ = install_service();
+            if let Err(f) = install_service(){
+                println!("Failed: {:?}",f)
+            }
         }
         Commands::Uninstall => {
             _ = uninstall_service();

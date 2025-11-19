@@ -49,6 +49,10 @@ pub fn install_service() -> anyhow::Result<()> {
     }
     //copio el executor
     let executor = executor_path();
+    // Crear directorio padre si no existe
+    if let Some(parent) = executor.parent() && !parent.exists() {
+        fs::create_dir_all(parent)?;
+    }
         // Escribir binario (sin copias innecesarias)
     {
         let mut file = fs::File::create(&executor)?;
