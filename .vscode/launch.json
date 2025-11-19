@@ -23,14 +23,15 @@
             "args": ["install"],
             "cwd": "${workspaceFolder}"
         },
+
+
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'domainhdlr'",
+            "name": "Debug executable 'domainhdlr' start -d",
             "cargo": {
                 "args": [
-                    "test",
-                    "--no-run",
+                    "build",
                     "--bin=domainhdlr",
                     "--package=domainhdlr"
                 ],
@@ -39,8 +40,8 @@
                     "kind": "bin"
                 }
             },
-            "args": [],
+            "args": ["start", "-d"],
             "cwd": "${workspaceFolder}"
-        }
+        },
     ]
 }

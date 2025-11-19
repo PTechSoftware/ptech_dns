@@ -1,5 +1,6 @@
-use std::process::{Command, Stdio};
+use std::os::unix::process::CommandExt;
 use std::path::PathBuf;
+use std::process::{Command, Stdio};
 
 use crate::{
     proc_info::{self, is_running, kill},
@@ -19,28 +20,34 @@ pub async fn start() -> anyhow::Result<()> {
     // Ejecutar el proceso con salida en la consola
     Command::new(&bin)
         .current_dir(&bin_folder)
-        .stdin(Stdio::null())        // no necesita input
-        .stdout(Stdio::inherit())    // imprime EN TU CONSOLA
-        .stderr(Stdio::inherit())    // imprime errores EN TU CONSOLA
-        .spawn()?;                   // no bloquea
+        .stdin(Stdio::null()) // no necesita input
+        .stdout(Stdio::inherit()) // imprime EN TU CONSOLA
+        .stderr(Stdio::inherit()) // imprime errores EN TU CONSOLA
+        .spawn()?; // no bloquea
 
     Ok(())
 }
 
-pub fn start_blocking() -> anyhow::Result<()> {
-    if is_running(SERVICE_NAME) {
-        kill(SERVICE_NAME);
-    }
-
+pub fn start_detached() -> anyhow::Result<()> {
     let bin = executor_path();
-    let bin_folder: PathBuf = bin.parent().unwrap().into();
+    let bin_folder = bin.parent().unwrap();
 
-    Command::new(&bin)
-        .current_dir(&bin_folder)
-        .stdin(Stdio::null())
-        .stdout(Stdio::null())
-        .stderr(Stdio::null())
-        .spawn()?; // totalmente detached
+    unsafe {
+        Command::new(&bin)
+            .current_dir(&bin_folder)
+            .stdin(Stdio::null())
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .pre_exec(|| {
+                // async-signal-safe ONLY
+                // setsid() SI ES async-signal-safe
+                if libc::setsid() == -1 {
+                    return Err(std::io::Error::last_os_error());
+                }
+                Ok(())
+            })
+            .spawn()?;
+    }
 
     Ok(())
 }

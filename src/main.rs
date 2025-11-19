@@ -1,13 +1,12 @@
 use std::{fs, io, thread};
 
 use clap::Parser;
-use tokio::runtime::Builder;
 
 use crate::{
     commands::{Cli, Commands},
     domains::{add_domain, delete_domain, list_domains},
     rutas::{log_file, log_file_error},
-    service::{restart, start, start_blocking, status, stop},
+    service::{restart, start, start_detached, status, stop},
     ubuntu_srv::{install_service, set_enable_on_boot, uninstall_service},
 };
 
@@ -28,7 +27,7 @@ async fn main() {
         Commands::Start { detached } => {
             if detached {
                 thread::spawn(|| {
-                    if let Err(e) = start_blocking() {
+                    if let Err(e) = start_detached() {
                         eprintln!("Error running detached service: {}", e);
                     }
                 });
