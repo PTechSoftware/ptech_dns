@@ -1,6 +1,6 @@
 
 
-use std::process::{Command, ExitStatus};
+use std::process::{Command};
 
 use crate::{proc_info::{self, is_running, kill}, rutas::executor_path};
 

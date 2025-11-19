@@ -41,11 +41,13 @@ pub fn proc_information(process_name: &str) {
             println!(r#"
             ------------------------------------------------------
             PID: {}
+            CPU TIME : {}
             CPU USAGE : {}
             MEMORY: {}
             RUN TIME : {}
             ------------------------------------------------------
             "#, 
+                pid.as_u32(),
                 proc.accumulated_cpu_time(),
                 proc.cpu_usage(),
                 proc.memory(),
