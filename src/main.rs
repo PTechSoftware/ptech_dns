@@ -3,34 +3,32 @@ use std::{fs, io, thread};
 use clap::Parser;
 use tokio::runtime::Builder;
 
-use crate::{commands::{Cli, Commands}, domains::{add_domain, delete_domain, list_domains}, rutas::{log_file, log_file_error}, service::{restart, start, status, stop}, ubuntu_srv::{install_service, set_enable_on_boot, uninstall_service}};
+use crate::{
+    commands::{Cli, Commands},
+    domains::{add_domain, delete_domain, list_domains},
+    rutas::{log_file, log_file_error},
+    service::{restart, start, start_blocking, status, stop},
+    ubuntu_srv::{install_service, set_enable_on_boot, uninstall_service},
+};
 
+mod commands;
 mod domains;
 mod entry;
-mod ubuntu_srv;
-mod rutas;
-mod commands;
-mod service;
 mod proc_info;
- 
+mod rutas;
+mod service;
+mod ubuntu_srv;
 
-const BINARY : &'static [u8] = include_bytes!("./bin/ptech_dns_executor");
+const BINARY: &'static [u8] = include_bytes!("./bin/ptech_dns_executor");
 
 #[tokio::main]
 async fn main() {
-
     let cli = Cli::parse();
     match cli.command {
         Commands::Start { detached } => {
             if detached {
-
-
                 thread::spawn(|| {
-
-                    let rt = Builder::new_current_thread()
-                    .thread_name("runner_domain_hdlr")
-                    .build().unwrap();
-                    if let Err(e) = rt.block_on(start()) {
+                    if let Err(e) = start_blocking() {
                         eprintln!("Error running detached service: {}", e);
                     }
                 });
@@ -40,8 +38,8 @@ async fn main() {
             print!("")
         }
         Commands::Install => {
-            if let Err(f) = install_service(){
-                println!("Failed: {:?}",f)
+            if let Err(f) = install_service() {
+                println!("Failed: {:?}", f)
             }
         }
         Commands::Uninstall => {
@@ -87,9 +85,7 @@ async fn main() {
             }
         }
     }
-
 }
-
 
 fn read_log_errors() -> io::Result<Vec<String>> {
     let log_path = log_file();
@@ -97,18 +93,18 @@ fn read_log_errors() -> io::Result<Vec<String>> {
 
     let log_ok = match fs::read_to_string(&log_path) {
         Ok(ctn) => ctn,
-        _ => String::new()
+        _ => String::new(),
     };
 
     let log_err = match fs::read_to_string(&error_log_path) {
         Ok(ctn) => ctn,
-        _ => String::new()
+        _ => String::new(),
     };
 
     Ok(vec![
         "Log OK : ".to_string(),
         log_ok,
         "Log Error: ".to_string(),
-        log_err
-        ])
+        log_err,
+    ])
 }

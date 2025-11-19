@@ -6,7 +6,7 @@ use crate::{
     rutas::executor_path,
 };
 
-const SERVICE_NAME: &str = "ptech_dns_execu";
+const SERVICE_NAME: &str = "executor";
 
 pub async fn start() -> anyhow::Result<()> {
     if is_running(SERVICE_NAME) {
@@ -27,6 +27,23 @@ pub async fn start() -> anyhow::Result<()> {
     Ok(())
 }
 
+pub fn start_blocking() -> anyhow::Result<()> {
+    if is_running(SERVICE_NAME) {
+        kill(SERVICE_NAME);
+    }
+
+    let bin = executor_path();
+    let bin_folder: PathBuf = bin.parent().unwrap().into();
+
+    Command::new(&bin)
+        .current_dir(&bin_folder)
+        .stdin(Stdio::null())
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .spawn()?; // totalmente detached
+
+    Ok(())
+}
 pub async fn stop() -> anyhow::Result<()> {
     if is_running(SERVICE_NAME) {
         kill(SERVICE_NAME);
