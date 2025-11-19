@@ -6,7 +6,7 @@ use crate::{
     rutas::executor_path,
 };
 
-const SERVICE_NAME: &str = "ptech_dns_executor";
+const SERVICE_NAME: &str = "ptech_dns_execu";
 
 pub async fn start() -> anyhow::Result<()> {
     if is_running(SERVICE_NAME) {

@@ -55,3 +55,14 @@ pub fn proc_information(process_name: &str) {
         }
     }
 }
+
+
+#[cfg(test)]
+mod test{
+    use crate::proc_info::proc_information;
+
+    #[test]
+    fn test(){
+        proc_information("ptech_dns_execu"); //corta a en una cierta cantidad de chars
+    }
+}
