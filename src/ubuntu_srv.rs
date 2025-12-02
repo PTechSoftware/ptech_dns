@@ -120,15 +120,17 @@ Description=Domain Handler Service for DuckDNS
 After=network.target
 
 [Service]
-ExecStart={} start
-Restart=on-failure
+ExecStart={}
 User={}
 WorkingDirectory={}
+Restart=on-failure
+RestartSec=1s
+KillMode=mixed
 
 [Install]
 WantedBy=default.target
 "#,
-        bin_path().to_string_lossy(),
+        executor_path().to_string_lossy(),
         whoami::username(),
         bin_dir().to_string_lossy()
     );

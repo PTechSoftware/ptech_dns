@@ -18,7 +18,7 @@ mod rutas;
 mod service;
 mod ubuntu_srv;
 
-const BINARY: &'static [u8] = include_bytes!("./bin/ptech_dns_executor");
+const BINARY: &'static [u8] = include_bytes!("./bin/executor");
 
 #[tokio::main]
 async fn main() {
